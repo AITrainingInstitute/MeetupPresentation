@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Favicon_black.png" type="image/png">
+    <title>Naval Ravikant: How to Get Rich (für AI-Dienstleistungen)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #f9c307; /* Vibrant Yellow from palette */
+            --secondary-color: #FACF39; /* Lighter Yellow/Gold from palette */
+            --background-color: #212121; /* Dark Gray from palette */
+            --surface-color: #2b2b2b;    /* Slightly Lighter Dark for cards */
+            --on-primary-color: #121212; /* Dark text for on-yellow elements */
+            --on-background-color: #e6e6e6; /* Light Gray from palette */
+            --on-surface-color: #ffffff;   /* White from palette */
+            --font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--on-background-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            text-align: center;
+            font-size: 18px; /* Increased base font size */
+        }
+
+        .presentation-wrapper { /* Neuer Wrapper für Vollbild */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* Für Fullscreen-Button Positionierung */
+        }
+        
+        .fullscreen-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255,255,255,0.1);
+            color: var(--on-background-color);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8em;
+            z-index: 100;
+            transition: background-color 0.3s ease;
+        }
+        .fullscreen-button:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+        .fullscreen-button svg {
+            vertical-align: middle;
+            margin-right: 5px;
+            width: 14px;
+            height: 14px;
+        }
+
+
+        .presentation-container {
+            background-color: var(--surface-color);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 40px 60px; /* FROM FULLSCREEN: Slightly more padding */
+            width: 90%;
+            max-width: 95%;    /* FROM FULLSCREEN: Take more width */
+            min-height: 90vh;  /* FROM FULLSCREEN: Take more height */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.95) translateX(80px); /* Initial state for incoming from right: slightly smaller, shifted right */
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out, visibility 0.6s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateX(0);
+        }
+        
+        .slide.exiting-left {
+            transform: scale(0.95) translateX(-80px); /* Exiting to left: slightly smaller, shifted left */
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .slide.exiting-right {
+            transform: scale(0.95) translateX(80px); /* Exiting to right: slightly smaller, shifted right */
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5em; /* Increased */
+            margin-bottom: 15px; /* Adjusted */
+            font-weight: 700;
+        }
+        
+        .presentation-title {
+             color: var(--on-surface-color);
+             font-size: 1.2em; /* Adjusted for golden ratio scale & less prominence */
+             margin-bottom: 0.5em; /* Adjusted for golden ratio spacing */
+             opacity: 0.6; /* Further Reduced for less prominence */
+        }
+
+        .slide-title {
+            color: var(--secondary-color);
+            font-size: 0.8em; /* Adjusted for golden ratio scale & less prominence */
+            margin-bottom: 0.8em; /* Adjusted for golden ratio spacing */
+            font-weight: 600;
+            opacity: 0.5; /* Further Reduced for less prominence */
+        }
+
+        .tweet-original {
+            font-style: italic;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px; 
+            border-radius: 8px;
+            margin-bottom: 1.3em; /* Adjusted for golden ratio spacing */
+            border-left: 4px solid var(--primary-color);
+            color: var(--on-background-color);
+            font-size: 2.2em; /* Reduced from 3em to better fit without scroll */
+            line-height: 1.5; /* Slightly reduced line-height for larger font */
+            text-align: left;
+            width: 90%; 
+            margin-left: auto; 
+            margin-right: auto; 
+            position: relative; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: box-shadow 0.3s ease-in-out;
+            min-height: 50px; /* Optional: ensure a minimum height even for very short tweets */
+        }
+
+        .tweet-original::after { /* Blinking cursor */
+            content: '|';
+            opacity: 1;
+            animation: blink 1s infinite;
+            color: var(--on-background-color);
+            position: absolute; /* Position relative to tweet-original */
+            /* Adjust top/right/bottom as needed if tweet text wraps etc. */
+        }
+
+        .tweet-original.typing-done::after {
+            display: none; /* Hide cursor when typing is done */
+        }
+
+        .tweet-original:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        /* Styles for focus mode during tweet typing */
+        .slide.tweet-typing-active .presentation-title,
+        .slide.tweet-typing-active .slide-title,
+        .slide.tweet-typing-active .ai-comment-container,
+        .slide.tweet-typing-active .bullet-list li {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.1s ease, visibility 0.1s ease; /* Quick fade out */
+        }
+
+        .slide .ai-comment-container, /* Default state for when not typing */
+        .slide .bullet-list li.visible {
+            opacity: 1;
+            visibility: visible;
+            /* Transition for appearing can be set on the elements themselves or handled by JS */
+        }
+
+        /* Explicitly show titles when not typing */
+        .slide:not(.tweet-typing-active) .presentation-title,
+        .slide:not(.tweet-typing-active) .slide-title {
+            opacity: 0.6; /* Or original opacity if different */
+            visibility: visible;
+            /* Add transition if you want them to fade in */
+        }
+        .slide:not(.tweet-typing-active) .slide-title {
+             opacity: 0.5; /* Or original opacity if different */
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .ai-comment-container {
+            background-color: rgba(250, 207, 57, 0.08); 
+            padding: 20px; 
+            border-radius: 8px;
+            margin-bottom: 1.3em; /* Adjusted for golden ratio spacing */
+            color: var(--on-background-color);
+            font-size: 1.2em; /* Kept as is, good readability */
+            line-height: 1.7;
+            text-align: left;
+            width: 90%; 
+            max-height: 350px; /* FROM FULLSCREEN: Adjusted */
+            overflow-y: auto; 
+            margin-left: auto; /* Center it */
+            margin-right: auto; /* Center it */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .ai-comment-container:hover {
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+        .ai-comment-container strong {
+            color: var(--secondary-color);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.5em; /* Adjusted for golden ratio spacing */
+        }
+        .bullet-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        .bullet-list li {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+            margin-bottom: 0.8em; /* Adjusted for golden ratio spacing */
+            padding-left: 25px; 
+            position: relative;
+            font-size: 1.2em; /* Adjusted for consistency with ai-comment */
+        }
+        .bullet-list li::before { /* Custom Bullet */
+            content: "●"; /* Changed to solid circle */
+            color: var(--primary-color); /* Using primary yellow for more pop */
+            position: absolute;
+            left: 0;
+            top: 50%; /* Adjust for vertical centering */
+            transform: translateY(-50%); /* Adjust for vertical centering */
+            font-size: 1.3em; /* Adjusted bullet size */
+        }
+        .bullet-list li.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+
+        .discussion-prompt {
+            font-size: 1em; /* Increased */
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-top: 15px; /* Adjusted */
+            opacity: 0.8;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+            padding: 0 100px; /* Increased horizontal padding */
+            box-sizing: border-box;
+            position: absolute;
+            bottom: 40px;  /* FROM FULLSCREEN */
+            left: 0;
+        }
+
+        .nav-button {
+            background-color: var(--primary-color);
+            color: var(--on-primary-color);
+            border: none;
+            padding: 14px 28px; /* FROM FULLSCREEN: Adjusted */
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em; /* FROM FULLSCREEN: Adjusted for new base */
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .nav-button:hover {
+            background-color: #d4a106; /* Darker, desaturated yellow for hover */
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background-color: #555;
+            color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+        
+        .slide-counter {
+            color: var(--on-background-color);
+            font-size: 1em; /* FROM FULLSCREEN: Adjusted for new base */
+            position: absolute;
+            bottom: 15px; /* FROM FULLSCREEN */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .intro-slide h1, .outro-slide h1 {
+             font-size: 2.8em; /* Existing base for intro, will be overridden for outro */
+             color: var(--on-surface-color);
+        }
+        .outro-slide h1 {
+            font-size: 3.8em; /* Significantly larger for final message */
+            line-height: 1.2; /* Adjust for large single line */
+        }
+        .intro-slide p, .outro-slide p {
+            font-size: 1.8em; /* Adjusted for golden ratio scale */
+            line-height: 1.7;
+            max-width: 90%;
+        }
+        .intro-slide .start-button {
+            margin-top: 30px;
+        }
+        .outro-slide {
+            text-align: center;
+        }
+
+        .illustration {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 0.8em; /* Adjusted based on golden ratio */
+            fill: var(--primary-color);
+        }
+
+        .intro-slide .event-info {
+            font-size: 1.1em; 
+            color: var(--secondary-color);
+            margin-top: 0.5em;
+            margin-bottom: 1.5em;
+            font-weight: 600;
+        }
+
+        .slide-logo {
+            position: absolute;
+            top: 25px; /* Adjust as needed */
+            left: 25px; /* Adjust as needed */
+            width: 90px; /* Adjust as needed */
+            height: auto;
+            z-index: 50; /* Ensure it's above general slide content but below critical UI like fullscreen button */
+        }
+
+        .intro-slide .intro-naval-image {
+            width: 360px; 
+            height: auto; 
+            object-fit: cover;
+            margin-top: 0;
+            margin-bottom: 25px;
+            animation: navalIntroAnimation 0.7s cubic-bezier(0.175, 0.885, 0.320, 1.275) 0.3s backwards;
+        }
+
+        @keyframes navalIntroAnimation {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(80px) rotate(25deg);
+            }
+            60% {
+                opacity: 0.8;
+                transform: scale(1.05) translateY(-15px) rotate(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0) rotate(0deg);
+            }
+        }
+
+        .slide.intro-slide {
+            pointer-events: auto; /* Ensure the slide itself allows pointer events */
+        }
+
+        .intro-slide .start-button {
+            position: relative; 
+            z-index: 9999; /* Extremely high for testing */
+            pointer-events: all !important; 
+            cursor: pointer !important; 
+            background-color: var(--primary-color) !important; 
+            color: var(--on-primary-color) !important;
+            opacity: 1 !important; 
+            visibility: visible !important; 
+            display: inline-block !important; 
+            padding: 14px 28px !important; /* Ensure padding is applied */
+            /* Add other base nav-button styles if they were overridden, or ensure this selector is specific enough */
+            margin-top: 30px !important; /* From original .intro-slide .start-button, ensure it has space */
+        }
+
+        .intro-slide .start-button:hover {
+            background-color: red !important; /* DRASTIC hover effect for testing */
+            transform: scale(1.1) translateY(-2px) !important; /* Combine with existing hover transform */
+            color: white !important; /* Ensure text is visible on red */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="presentation-wrapper" id="presentationWrapper">
+        <button id="fullscreenBtn" class="fullscreen-button">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>
+            Vollbild
+        </button>
+        <div class="presentation-container">
+            <!-- Die Folien werden hier per JavaScript eingefügt -->
+        </div>
+
+        <div class="navigation">
+            <button id="prevBtn" class="nav-button">Zurück</button>
+            <button id="nextBtn" class="nav-button">Weiter</button>
+        </div>
+        <div id="slideCounter" class="slide-counter"></div>
+    </div>
+
+    <script>
+        const presentationData = [
+  {
+    type: "intro",
+    title: "How to Get Rich (without getting lucky) - AI Edition",
+    eventInfo: "AI Explorer Club Meetup Wiesbaden - 10. Mai 2025"
+  },
+  {
+    tweet: "You're not going to get rich by renting out your time. You must own equity — a piece of a business — to gain your financial freedom.",
+    comment: [
+      "Reine Zeit-gegen-Geld-Modelle im AI-Sektor deckeln dein Einkommenspotenzial.",
+      "Schaffe oder erwirb Anteile an skalierbaren AI-Produkten und Plattformen.",
+      "Equity arbeitet weiter, selbst wenn du Feierabend hast – Vermögen entsteht passiv."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.13-4.17c.52.47 1.2.77 1.96.77 1.38 0 2.5-1.12 2.5-2.5S19.38 3 18 3s-2.5 1.12-2.5 2.5c0 .24.04.47.09.7L8.45 10.37c-.52-.47-1.2-.77-1.96-.77-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5c.76 0 1.44-.3 1.96-.77l7.13 4.17c-.05.23-.09.46-.09.7s.04.47.09.7l.02.02c.52.47 1.2.77 1.96.77 1.38 0 2.5-1.12 2.5-2.5s-1.12-2.5-2.5-2.5z"/></svg>`
+  },
+  {
+    tweet: "You will get rich by giving society what it wants but does not yet know how to get. At scale.",
+    comment: [
+      "Unternehmen hungern nach AI-Lösungen und verfügen oft nicht über das Know-how.",
+      "Biete früh funktionierende Angebote an, bevor Konkurrenz und Markt gesättigt sind.",
+      "Verkaufe deine Lösung einmal an viele Kunden, statt Einzelsessions abzuarbeiten."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.995 4.995 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.06-2.15 3.99l.02.11z"/></svg>`
+  },
+  {
+    tweet: "The internet has massively broadened the possible space of careers. Most people haven't figured this out yet.",
+    comment: [
+      "Das Netz öffnet globale Märkte selbst für kleinste AI-Nischen.",
+      "Vertreibe Beratung, Kurse oder Tools weltweit – Standort spielt kaum noch Rolle.",
+      "Nutze Communitys früh, um Expertise zu zeigen, bevor sie Mainstream werden."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93s3.05-7.44 7-7.93v15.86zm2-15.86c3.95.49 7 3.85 7 7.93s-3.05 7.44-7 7.93V4.07z"/></svg>`
+  },
+  {
+    tweet: "Learn to sell. Learn to build. If you can do both, you will be unstoppable.",
+    comment: [
+      "Verbinde tiefe AI-Kompetenz mit überzeugendem Vertrieb – das ist Gold wert.",
+      "Wer beides beherrscht, kontrolliert Wertschöpfung UND Nachfrage.",
+      "Diese Doppelrolle macht dich im Markt nahezu unaufhaltsam."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`
+  },
+  {
+    tweet: "Specific knowledge is knowledge that you cannot be trained for. If society can train you, it can train someone else, and replace you.",
+    comment: [
+      "Allgemeines AI-Wissen ist austauschbar; seltene Expertise ist deine Festung.",
+      "Investiere Zeit in tiefes, schwer kopierbares Know-how.",
+      "So schützt du dein Einkommen vor Billigkonkurrenz und Automatisierung."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-1.5 15h-3v-2h3v2zm0-4h-3v-2h3v2zm-4.5-4.5c0-1.66 1.34-3 3-3s3 1.34 3 3h-6zM13 9V3.5L18.5 9H13z"/></svg>`
+  },
+  {
+    tweet: "Specific knowledge is often highly technical or creative. It cannot be outsourced or automated.",
+    comment: [
+      "Hochspezialisierte Algorithmen oder kreative AI-Konzepte lassen sich nicht outsourcen.",
+      "Diese Fähigkeiten bleiben selbst bei weiterem Automatisierungsfortschritt gefragt.",
+      "Sie sichern dir dauerhafte Relevanz und hohe Honorare."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h6v2H8v2h8v-2h-2v-2h6c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>`
+  },
+  {
+    tweet: "Embrace accountability, and take business risks under your own name. Society will reward you with responsibility, equity, and leverage.",
+    comment: [
+      "Stehe mit deinem Namen für die Ergebnisse deiner AI-Projekte ein.",
+      "Persönliches Risiko baut Vertrauen auf und öffnet Türen zu Beteiligungen.",
+      "Deine starke Personal Brand wird selbst zum Hebel für neue Chancen."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M12 2L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-3zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12.99H5V6.3l7-3.11v10.8z"/></svg>`
+  },
+  {
+    tweet: "Fortunes require leverage. Business leverage comes from capital, people, and products with no marginal costs of replication (code and media).",
+    comment: [
+      "Wachstum braucht Hebel aus Kapital, Team und vor allem replizierbarer Software.",
+      "Erstelle AI-Assets, die sich unendlich oft verkaufen lassen.",
+      "Mit jedem zusätzlichen Kunden steigen die Einnahmen, nicht die Kosten."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M7 18h2V6H7v12zm4 0h2V6h-2v12zm4 0h2V6h-2v12zm4-13h-2v10h2V5zm-1.5-2a.5.5 0 0 0-.5-.5h-13a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V3zM4 20h16v2H4v-2z"/></svg>`
+  },
+  {
+    tweet: "Code and media are permissionless leverage. They're the leverage behind the newly rich. You can create software and media that works for you while you sleep.",
+    comment: [
+      "Code und Content erfordern keine Erlaubnis – starte einfach und skaliere digital.",
+      "Eine AI-App oder ein Kurs verkaufen sich rund um die Uhr weltweit.",
+      "So baust du Vermögensströme auf, die selbst im Schlaf fließen."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>`
+  },
+  {
+    tweet: "An army of robots is freely available — it's just packed in data centers for heat and space efficiency. Use it.",
+    comment: [
+      "Cloud-Rechenzentren stellen dir nahezu unbegrenzte AI-Power on-demand bereit.",
+      "Automatisiere repetitive Prozesse, statt zusätzliche Köpfe einzustellen.",
+      "So wächst deine Output-Kapazität, ohne deine Arbeitszeit zu erhöhen."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>`
+  },
+  {
+    tweet: "If you can't code, write books and blogs, record videos and podcasts.",
+    comment: [
+      "Wenn du nicht programmierst, verbreite dein AI-Wissen via Bücher, Blog oder Video.",
+      "Erkläre komplexe Themen verständlich und baue Thought-Leadership auf.",
+      "Reichweite und Vertrauen führen zu Aufträgen, auch ohne eigene Software."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4zm12 15H6c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v14c0 .55-.45 1-1 1z"/></svg>`
+  },
+  {
+    tweet: "Become the best in the world at what you do. Keep redefining what you do until this is true.",
+    comment: [
+      "Definiere deine AI-Nische so eng, bis du darin führend bist.",
+      "Weltklasse-Status erlaubt Premium-Preise und magnetisiert Kunden.",
+      "Spezialisierung schafft Alleinstellung und schützt vor Wettbewerb."
+    ],
+    illustration: `<svg class="illustration" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`
+  },
+  {
+    type: "outro",
+    title: "Vielen Dank für deine Aufmerksamkeit.",
+    mainText: ""
+  }
+]
+
+
+;
+
+        let currentSlide = 0;
+        const presentationContainer = document.querySelector('.presentation-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterElement = document.getElementById('slideCounter');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const presentationWrapper = document.getElementById('presentationWrapper');
+        let slides = [];
+        let currentTypewriterTimeout = null; // To control ongoing typewriter
+        let isTweetTyping = false; // Flag to indicate if tweet is currently typing
+
+        function buildSlides() {
+            presentationData.forEach((data, index) => {
+                const slideDiv = document.createElement('div');
+                slideDiv.classList.add('slide');
+                slideDiv.id = `slide-${index}`;
+                
+                // Add logo to all slides
+                const logoHTML = `<img src="AITIFreistehendtransparent.png" alt="AITI Logo" class="slide-logo">`;
+
+                if (data.type === "intro") {
+                    slideDiv.classList.add('intro-slide');
+                    slideDiv.innerHTML = `
+                        ${logoHTML}
+                        <img src="naval-ravikant.jpg" alt="Naval Ravikant" class="intro-naval-image">
+                        <h1>${data.title}</h1>
+                        ${data.eventInfo ? `<p class="event-info">${data.eventInfo}</p>` : ''}
+                    `;
+                } else if (data.type === "outro") {
+                    slideDiv.classList.add('outro-slide');
+                     slideDiv.innerHTML = `
+                        ${logoHTML}
+                        <h1>${data.title}</h1>
+                        ${data.mainText ? `<p>${data.mainText}</p>` : ''} 
+                    `; // mainText will be empty here, so <p> won't render if condition is strict
+                } else {
+                    let commentHTML = '';
+                    if (Array.isArray(data.comment)) {
+                        commentHTML = `<ul class="bullet-list">
+                            ${data.comment.map(point => `<li>${point}</li>`).join('')}
+                        </ul>`;
+                    } else { 
+                        commentHTML = data.comment;
+                    }
+
+                    slideDiv.innerHTML = `
+                        ${logoHTML}
+                        <h2 class="presentation-title">How to Get Rich (without getting lucky) <span style="font-size:0.7em; color:var(--primary-color);">- AI Edition</span></h2>
+                        <p class="slide-title">Tweet von Naval Ravikant</p>
+                        ${data.illustration}
+                        <div class="tweet-original" data-original-tweet="${data.tweet.replace(/"/g, '&quot;')}"></div>
+                        <div class="ai-comment-container">
+                            <strong>Bezug für dich als AI Explorer:</strong>
+                            ${commentHTML}
+                        </div>
+                    `;
+                }
+                presentationContainer.appendChild(slideDiv);
+                slides.push(slideDiv);
+            });
+        }
+        
+        function updateSlideCounter() {
+            const actualContentSlides = presentationData.filter(d => !d.type).length;
+            let currentContentSlideNum = 0;
+            
+            if (presentationData[currentSlide].type) {
+                slideCounterElement.textContent = "";
+            } else {
+                for(let i=0; i <= currentSlide; i++) {
+                    if(!presentationData[i].type) {
+                        currentContentSlideNum++;
+                    }
+                }
+                 slideCounterElement.textContent = `Tweet ${currentContentSlideNum} / ${actualContentSlides}`;
+            }
+        }
+
+        async function typewriteEffect(element, text, targetDurationSeconds = 7) {
+            return new Promise((resolve) => {
+                element.textContent = '';
+                element.classList.remove('typing-done');
+                element.classList.add('typing'); // Assuming .typing controls cursor visibility
+                isTweetTyping = true;
+
+                let charIndex = 0;
+                const avgCharsPerSecond = text.length / targetDurationSeconds;
+                const baseDelay = 1000 / avgCharsPerSecond; // ms per char on average
+
+                function typeChar() {
+                    if (charIndex < text.length) {
+                        element.textContent += text[charIndex];
+                        let currentDelay = baseDelay;
+
+                        // Natural typing variations
+                        const char = text[charIndex];
+                        if (char === ' ' ) {
+                            currentDelay *= 0.5; // Faster for spaces
+                        } else if ('.?!,;'.includes(char)) {
+                            currentDelay *= 2.5; // Longer pause for punctuation
+                        }
+                        // Add some randomness
+                        currentDelay += (Math.random() - 0.5) * (baseDelay * 0.5); 
+                        currentDelay = Math.max(20, currentDelay); // Ensure a minimum delay
+
+                        charIndex++;
+                        if (isTweetTyping) { // Check if we should continue
+                           currentTypewriterTimeout = setTimeout(typeChar, currentDelay);
+                        } else { // Typing was interrupted (e.g., by skip)
+                            element.textContent = text; // Show full text immediately
+                            element.classList.remove('typing');
+                            element.classList.add('typing-done');
+                            resolve();
+                        }
+                    } else {
+                        element.classList.remove('typing');
+                        element.classList.add('typing-done');
+                        isTweetTyping = false;
+                        resolve();
+                    }
+                }
+                typeChar();
+            });
+        }
+        
+        function completeTypewriterAnimation(slideElement) {
+            if (isTweetTyping && currentTypewriterTimeout) {
+                clearTimeout(currentTypewriterTimeout);
+                isTweetTyping = false; // This will trigger immediate completion in typeChar
+                const tweetDiv = slideElement.querySelector('.tweet-original');
+                const originalText = tweetDiv.dataset.originalTweet;
+                tweetDiv.textContent = originalText;
+                tweetDiv.classList.remove('typing');
+                tweetDiv.classList.add('typing-done');
+
+                // Ensure AI comment section is made visible
+                const aiCommentContainer = slideElement.querySelector('.ai-comment-container');
+                if (aiCommentContainer) {
+                    aiCommentContainer.style.opacity = '1';
+                    aiCommentContainer.style.visibility = 'visible';
+                }
+                slideElement.classList.remove('tweet-typing-active');
+            }
+        }
+
+        async function showSlide(slideIndex, direction = "next") {
+            if (isTweetTyping) {
+                completeTypewriterAnimation(slides[currentSlide]);
+            }
+            slides.forEach((slide, index) => {
+                if (index === currentSlide && index !== slideIndex) {
+                    if (direction === "next") slide.classList.add('exiting-left');
+                    else slide.classList.add('exiting-right');
+                    setTimeout(() => slide.classList.remove('active', 'exiting-left', 'exiting-right'), 600);
+                } else {
+                    slide.classList.remove('active', 'exiting-left', 'exiting-right', 'tweet-typing-active');
+                }
+            });
+            
+            currentSlide = slideIndex;
+            const currentSlideElement = slides[currentSlide];
+            currentSlideElement.classList.add('active');
+            
+            // Reset and initialize bullet points and AI comment visibility for the new active slide
+            const bulletList = currentSlideElement.querySelector('.bullet-list');
+            const aiCommentContainer = currentSlideElement.querySelector('.ai-comment-container');
+
+            if (aiCommentContainer) { // Initially hide AI comment and bullets for content slides
+                aiCommentContainer.style.opacity = '0';
+                aiCommentContainer.style.visibility = 'hidden';
+            }
+            if (bulletList) {
+                Array.from(bulletList.querySelectorAll('li')).forEach(li => li.classList.remove('visible'));
+            }
+
+            // Handle Tweet Typewriter Animation for content slides
+            if (!presentationData[currentSlide].type) {
+                currentSlideElement.classList.add('tweet-typing-active');
+                const tweetDiv = currentSlideElement.querySelector('.tweet-original');
+                const originalTweetText = tweetDiv.dataset.originalTweet;
+                
+                // Disable next button during typing, or change its function to "Skip Animation"
+                nextBtn.disabled = true; 
+                nextBtn.textContent = "Tweet lädt...";
+
+                await typewriteEffect(tweetDiv, originalTweetText);
+                
+                currentSlideElement.classList.remove('tweet-typing-active');
+                if (aiCommentContainer) { // Show AI comment after typing
+                    aiCommentContainer.style.opacity = '1';
+                    aiCommentContainer.style.visibility = 'visible';
+                }
+                
+                // Setup for bullet points after tweet typing
+                setupNextButtonAfterTyping(currentSlideElement);
+
+            } else if (presentationData[currentSlide].type === "intro") {
+                nextBtn.textContent = "Präsentation starten"; // Change text for intro slide
+                prevBtn.style.visibility = 'hidden';
+                prevBtn.disabled = true;
+                nextBtn.style.visibility = 'visible'; // Make Next (now "Präsentation starten") button visible
+                nextBtn.disabled = false;            // Make it clickable
+            } else { // Outro Slide (and any other future special types)
+                nextBtn.textContent = "Weiter"; // Default text for other slides like outro
+            }
+            
+            prevBtn.disabled = currentSlide === 0; // This correctly disables prevBtn on the first slide
+
+            // General visibility logic for prev/next that might need refinement based on above
+            if (presentationData[currentSlide].type === "outro") {
+                // prevBtn visibility is fine (visible if not first slide)
+                nextBtn.style.visibility = 'hidden';
+                nextBtn.disabled = true;
+            } else if (presentationData[currentSlide].type !== "intro" && presentationData[currentSlide].type !== "outro") {
+                // Content slides: ensure both are visible if not handled by specific intro/outro logic
+                prevBtn.style.visibility = 'visible';
+                nextBtn.style.visibility = 'visible';
+                // nextBtn.disabled is handled by other functions for content slides
+            }
+            
+            // Remove logic for the separate .start-button in the middle of intro slide
+            const centralStartButton = slides[0].querySelector('.start-button');
+            if(centralStartButton) {
+                 centralStartButton.style.display = 'none'; // Ensure it's always hidden now
+            }
+            updateSlideCounter();
+        }
+
+        function setupNextButtonAfterTyping(slideElement) {
+            const bulletList = slideElement.querySelector('.bullet-list');
+            const aiCommentContainer = slideElement.querySelector('.ai-comment-container');
+            const presentationTitle = slideElement.querySelector('.presentation-title');
+            const slideTitle = slideElement.querySelector('.slide-title');
+
+            // Ensure titles are visible
+            if (presentationTitle) {
+                presentationTitle.style.opacity = '0.6'; // Restore opacity
+                presentationTitle.style.visibility = 'visible';
+            }
+            if (slideTitle) {
+                slideTitle.style.opacity = '0.5'; // Restore opacity
+                slideTitle.style.visibility = 'visible';
+            }
+
+            slideElement.classList.remove('tweet-typing-active');
+            // Initially, AI comment is NOT shown. User has to click to show it.
+            if (aiCommentContainer) {
+                aiCommentContainer.style.opacity = '0';
+                aiCommentContainer.style.visibility = 'hidden';
+            }
+            slideElement.dataset.commentAreaRevealed = 'false'; // New state
+
+            // Button should now prompt to show comments if there are any
+            if (presentationData[currentSlide].comment && presentationData[currentSlide].comment.length > 0) {
+                nextBtn.textContent = "Kommentar anzeigen";
+                nextBtn.disabled = false;
+            } else { // No comments, so just like before (either next bullet or next slide)
+                 if (bulletList) { // This case should ideally not happen if comments drive bullets
+                    const bullets = Array.from(bulletList.querySelectorAll('li'));
+                    if (bullets.length > 0 && parseInt(slideElement.dataset.revealedBullets || '0') < bullets.length) {
+                        nextBtn.textContent = "Nächster Punkt";
+                        nextBtn.disabled = false;
+                    } else {
+                        nextBtn.textContent = "Weiter";
+                        nextBtn.disabled = currentSlide === presentationData.length - 1;
+                    }
+                } else {
+                    nextBtn.textContent = "Weiter";
+                    nextBtn.disabled = currentSlide === presentationData.length - 1;
+                }
+            }
+        }
+
+        function showNextSlide() {
+            const currentSlideElement = slides[currentSlide];
+
+            if (isTweetTyping) {
+                completeTypewriterAnimation(currentSlideElement);
+                setupNextButtonAfterTyping(currentSlideElement);
+                return; 
+            }
+
+            // New: Check if comment area needs to be revealed first
+            if (currentSlideElement.dataset.commentAreaRevealed === 'false' && !presentationData[currentSlide].type) {
+                const aiCommentContainer = currentSlideElement.querySelector('.ai-comment-container');
+                if (aiCommentContainer) {
+                    aiCommentContainer.style.opacity = '1';
+                    aiCommentContainer.style.visibility = 'visible';
+                }
+                currentSlideElement.dataset.commentAreaRevealed = 'true';
+
+                // Now set up for first bullet or next slide
+                const bulletList = currentSlideElement.querySelector('.bullet-list');
+                if (bulletList) {
+                    const bullets = Array.from(bulletList.querySelectorAll('li'));
+                    currentSlideElement.dataset.revealedBullets = '0'; // Reset for this stage
+                    currentSlideElement.dataset.totalBullets = bullets.length;
+                    if (bullets.length > 0) {
+                        nextBtn.textContent = "Nächster Punkt";
+                        nextBtn.disabled = false;
+                    } else {
+                        nextBtn.textContent = "Weiter";
+                        nextBtn.disabled = currentSlide === presentationData.length - 1;
+                    }
+                } else {
+                    nextBtn.textContent = "Weiter";
+                    nextBtn.disabled = currentSlide === presentationData.length - 1;
+                }
+                return;
+            }
+
+            // Bullet reveal logic / slide advancement starts here
+            const bulletList = currentSlideElement.querySelector('.bullet-list');
+            
+            if (bulletList && !presentationData[currentSlide].type) { // Check it's a content slide with bullets
+                const bullets = Array.from(bulletList.querySelectorAll('li'));
+                let revealedCount = parseInt(currentSlideElement.dataset.revealedBullets || '0');
+                const totalBullets = parseInt(currentSlideElement.dataset.totalBullets || bullets.length);
+
+                if (totalBullets > 0 && revealedCount < totalBullets) {
+                    // Reveal the next bullet
+                    bullets[revealedCount].classList.add('visible');
+                    revealedCount++;
+                    currentSlideElement.dataset.revealedBullets = revealedCount;
+
+                    // Update button based on whether more bullets remain
+                    if (revealedCount < totalBullets) {
+                        nextBtn.textContent = "Nächster Punkt";
+                        nextBtn.disabled = false;
+                    } else { // This was the last bullet
+                        nextBtn.textContent = "Weiter";
+                        nextBtn.disabled = currentSlide === presentationData.length - 1;
+                    }
+                    return; // IMPORTANT: A bullet was revealed, so stop further action for this click.
+                }
+            }
+
+            // If we reach here, it means one of the following:
+            // 1. It's an intro/outro slide (already handled by earlier checks or has no bullet list).
+            // 2. No bullet list was found on a content slide.
+            // 3. All bullets (if any) have already been revealed on a content slide.
+            // So, try to advance to the next slide if possible.
+            if (currentSlide < presentationData.length - 1) {
+                showSlide(currentSlide + 1, "next");
+            } else {
+                // On the last slide, and all bullets (if any) are shown / no bullets.
+                // Ensure "Weiter" button is correctly disabled.
+                nextBtn.textContent = "Weiter";
+                nextBtn.disabled = true;
+            }
+        }
+
+        function showPrevSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1, "prev");
+            }
+        }
+
+        prevBtn.addEventListener('click', showPrevSlide);
+        nextBtn.addEventListener('click', showNextSlide);
+
+        // Fullscreen Logic
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                presentationWrapper.requestFullscreen().catch(err => {
+                    alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-15V5h-2v5h5V8h-3z"></path></svg> Vollbild verlassen`;
+            } else {
+                fullscreenBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg> Vollbild`;
+            }
+        });
+
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' && !nextBtn.disabled) {
+                showNextSlide();
+            } else if (event.key === 'ArrowLeft' && !prevBtn.disabled) {
+                showPrevSlide();
+            } else if (event.key === 'f' || event.key === 'F') {
+                toggleFullscreen();
+            } else if (event.key === 'Enter') {
+                if (currentSlide === 0 && presentationData[0].type === "intro") {
+                    const startButton = slides[0].querySelector('.start-button');
+                    if (startButton && startButton.style.display !== 'none') {
+                        showNextSlide();
+                    }
+                } else if (isTweetTyping) { 
+                    completeTypewriterAnimation(slides[currentSlide]);
+                    setupNextButtonAfterTyping(slides[currentSlide]); // Sets up "Kommentar anzeigen"
+                } else if (!nextBtn.disabled) { // Handles "Kommentar anzeigen", "Nächster Punkt", or "Weiter"
+                     showNextSlide();
+                }
+            }
+        });
+
+        presentationContainer.addEventListener('click', (event) => {
+            if (event.target === presentationContainer || event.target.classList.contains('slide')) {
+                if (isTweetTyping) {
+                    completeTypewriterAnimation(slides[currentSlide]);
+                    setupNextButtonAfterTyping(slides[currentSlide]); // Sets up "Kommentar anzeigen"
+                } else if (currentSlideElement.dataset.commentAreaRevealed === 'false' && !presentationData[currentSlide].type && !nextBtn.disabled) {
+                    // If comments not shown yet, and it's a content slide, a click acts like "Kommentar anzeigen"
+                    showNextSlide(); 
+                }
+            }
+        });
+
+        buildSlides();
+        showSlide(0);
+    </script>
+
+</body>
+</html>
